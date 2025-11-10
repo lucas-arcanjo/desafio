@@ -27,8 +27,26 @@ public class OrderService {
 
   @Transactional
   public Order create(NewOrderRequest req) {
-    // TODO: map DTO -> entities, calcular total, salvar, status=NEW
-    throw new UnsupportedOperationException("TODO: implementar criação de pedido");
+    Order order = new Order();
+    order.setCustomerId(req.getCustomerId());
+    order.setStatus(OrderStatus.NEW);
+
+    List<OrderItem> orderItems = req.getItems().stream()
+        .map(itemReq -> {
+          OrderItem orderItem = new OrderItem();
+          orderItem.setSku(itemReq.getSku());
+          orderItem.setQty(itemReq.getQty());
+          orderItem.setUnitPrice(itemReq.getUnitPrice());
+          orderItem.setOrder(order);
+          return orderItem;
+        })
+        .toList();
+        
+    order.setItems(orderItems);
+    order.setTotal(calculateTotal(orderItems));
+    
+    var save = this.repo.save(order);
+    return save;
   }
 
   public Optional<Order> get(String id) {

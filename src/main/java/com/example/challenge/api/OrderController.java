@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.apache.camel.ProducerTemplate;
+import org.apache.hc.core5.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,35 +33,36 @@ public class OrderController {
   @Operation(summary = "Cria um novo pedido")
   @PostMapping
   public ResponseEntity<Order> create(@Valid @RequestBody NewOrderRequest req) {
-    // TODO: implementar com service.create(req)
-    return ResponseEntity.status(501).build();
+    Order order = service.create(req);
+    return ResponseEntity.status(HttpStatus.SC_CREATED).body(order);
   }
 
   @Operation(summary = "Busca um pedido por ID")
   @GetMapping("/{id}")
   public ResponseEntity<Order> get(@PathVariable String id) {
-    // TODO: implementar com service.get(id)
+    service.get(id);
     return ResponseEntity.status(501).build();
   }
 
   @Operation(summary = "Lista pedidos (opcional filtrar por status)")
   @GetMapping
   public ResponseEntity<List<Order>> list(@RequestParam Optional<OrderStatus> status) {
-    // TODO: implementar com service.list(status)
-    return ResponseEntity.status(501).build();
+    service.list(status);
+    List<Order> orders = service.list(status);
+    return ResponseEntity.ok(orders);
   }
 
   @Operation(summary = "Atualiza itens de um pedido (apenas se NEW)")
   @PutMapping("/{id}")
   public ResponseEntity<Order> update(@PathVariable String id, @Valid @RequestBody UpdateOrderRequest req) {
-    // TODO: implementar com service.updateItems(id, req)
+    service.updateItems(id, req);
     return ResponseEntity.status(501).build();
   }
 
   @Operation(summary = "Exclui um pedido (apenas se NEW)")
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> delete(@PathVariable String id) {
-    // TODO: implementar com service.delete(id)
+    service.delete(id);
     return ResponseEntity.status(501).build();
   }
 
